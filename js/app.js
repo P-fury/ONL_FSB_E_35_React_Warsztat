@@ -3,15 +3,29 @@ import {createRoot} from "react-dom/client";
 import {getTasks, addTask, deleteTask, finishTask} from "./api/tasks";
 import NewTask from "./NewTask";
 import Task from "./Task";
+import {addOperation, getOperations} from "./api/operations";
 
 
 const App = () => {
     const [taskData, setTaskData] = React.useState(null);
-
+    const [formStatus, setFormStatus] = React.useState(false);
+    const [operations, setOperations] = React.useState(null);
 
     useEffect(() => {
-        getTasks(setTaskData);
+
+        getTasks((tasks) => {
+            setTaskData(tasks);
+            tasks.forEach(task => {
+                getOperations(task.id, (taskOperations) => {
+                    setOperations(prevOperations => ({
+                        ...prevOperations,
+                        [task.id]: taskOperations
+                    }));
+                });
+            });
+        });
     }, []);
+
 
     /* USUWANIE CALEGO ZDANIA */
     const handleDeleteTask = (taskID) => {
@@ -25,11 +39,31 @@ const App = () => {
                 const taskToUpdate = prevTasks.find(task => task.id === taskID);
                 const updatedTask = {...taskToUpdate, status: 'closed'};
 
-            return prevTasks.map(task =>
-                task.id === taskID ? updatedTask : task)
+                return prevTasks.map(task =>
+                    task.id === taskID ? updatedTask : task)
             }
         )
     }
+    /* STATUS FORMULARZU ZADANIA */
+    const toggleFormStatus = (taskID) => {
+        setFormStatus(prevStatus => ({
+            ...prevStatus,
+            [taskID]: !prevStatus[taskID]
+        }));
+    }
+
+
+    /* DODAWANIE OPERACJI */
+    const handleAddOperation = (taskID, taskToAddData) => {
+        addOperation(taskID, taskToAddData, (newOperation) => {
+            setOperations(prevOperations => ({
+                ...prevOperations,
+                [taskID]: [...(prevOperations[taskID] || []), newOperation],
+
+            }));
+            toggleFormStatus(taskID)
+        });
+    };
 
 
     if (taskData === null) {
@@ -41,7 +75,9 @@ const App = () => {
         <>
             {taskData.length}
             <NewTask onNewTask={setTaskData}/>
-            <Task importedTasks={taskData} onDeleteTask={handleDeleteTask} onFinishTask={handleFinishTask}/>
+            <Task importedTasks={taskData} onDeleteTask={handleDeleteTask} onFinishTask={handleFinishTask}
+                  formStatus={formStatus} toggleFormStatus={toggleFormStatus} operations={operations}
+                  handleAddOperation={handleAddOperation}/>
         </>
     )
 }
