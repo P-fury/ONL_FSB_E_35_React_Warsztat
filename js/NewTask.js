@@ -12,7 +12,7 @@ const NewTask = ({onNewTask}) => {
         addTask({
             title: title,
             description: description,
-            status: "",
+            status: "open",
         }, (newTask) => {
             onNewTask((prevTaskData) => [
                 ...prevTaskData,

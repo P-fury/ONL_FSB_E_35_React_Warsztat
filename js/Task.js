@@ -2,7 +2,9 @@ import React from "react";
 
 
 
-const Task = ({importedTasks}) => {
+const Task = ({importedTasks, onDeleteTask, onFinishTask}) => {
+
+
 
 return (<>
         {importedTasks.map((task) => (
@@ -10,7 +12,7 @@ return (<>
         <div className="card-header d-flex justify-content-between align-items-center">
             <div >
                 <h5>{task.title}</h5>
-                <h6 className="card-subtitle text-muted">{task.description}</h6>
+                <h6 className="card-subtitle text-muted">{task.description},{task.status}</h6>
             </div>
 
             <div>
@@ -20,12 +22,12 @@ return (<>
                 </button>
 
 
-                <button className="btn btn-dark btn-sm">
+                <button onClick={() => onFinishTask(task.id)} className="btn btn-dark btn-sm">
                     Finish
                     <i className="fas fa-archive ml-1"></i>
                 </button>
 
-                <button className="btn btn-outline-danger btn-sm ml-2">
+                <button onClick={() => onDeleteTask(task.id)} className="btn btn-outline-danger btn-sm ml-2">
                     <i className="fas fa-trash false"></i>
                 </button>
             </div>
