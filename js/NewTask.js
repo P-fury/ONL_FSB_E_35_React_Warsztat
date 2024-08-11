@@ -1,16 +1,29 @@
 import React, {useState} from "react";
+import {addTask} from "./api/tasks";
 
 
-const NewTask = () => {
-    const [formState, setFormState] = useState({})
-    const handleInputChange = (event) => {
-        const target = event.target;
-        const value = target.name;
-        setFormState({...formState, [target.name]: value});
+const NewTask = ({onNewTask}) => {
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+
+
+    const submitButton = (e) => {
+        e.preventDefault();
+        addTask({
+            title: title,
+            description: description,
+            status: "",
+        }, (newTask) => {
+            onNewTask((prevTaskData) => [
+                ...prevTaskData,
+                newTask
+            ])
+        })
     }
 
+
     return (
-        <div className="card shadow"  onSubmit={propagateSubmit}>
+        <div className="card shadow">
             <div className="card-body">
                 <h1 className="card-title">New task</h1>
                 <form>
@@ -18,20 +31,19 @@ const NewTask = () => {
                         <input type="text"
                                className="form-control"
                                name="title"
-                               onChange={handleInputChange}
-                               value={formState.title}
-                               placeholder="Title"/>
+                               placeholder="Title"
+                               onChange={(e) => setTitle(e.target.value)}
+                        />
                     </div>
                     <div className="form-group">
                         <input type="text"
                                className="form-control"
                                name="description"
-                               value={formState.description}
-                               onChange={handleInputChange}
-
-                               placeholder="Description"/>
+                               placeholder="Description"
+                               onChange={(e) => setDescription(e.target.value)}
+                        />
                     </div>
-                    <button className="btn btn-info" type="submit">
+                    <button className="btn btn-info" onClick={submitButton}>Add new task
                         Add task
                         <i className="fas fa-plus-circle ml-1"></i>
                     </button>
