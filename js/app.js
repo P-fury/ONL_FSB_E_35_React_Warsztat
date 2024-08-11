@@ -9,7 +9,10 @@ import {addOperation, getOperations} from "./api/operations";
 const App = () => {
     const [taskData, setTaskData] = React.useState(null);
     const [formStatus, setFormStatus] = React.useState(false);
+
     const [operations, setOperations] = React.useState(null);
+
+
 
     useEffect(() => {
 
@@ -34,16 +37,26 @@ const App = () => {
         });
     };
     /* FINISH ZDANIA */
+
     const handleFinishTask = (taskID) => {
         setTaskData(prevTasks => {
-                const taskToUpdate = prevTasks.find(task => task.id === taskID);
-                const updatedTask = {...taskToUpdate, status: 'closed'};
+            const taskToUpdate = prevTasks.find(task => task.id === taskID);
 
-                return prevTasks.map(task =>
-                    task.id === taskID ? updatedTask : task)
+            if (taskToUpdate) {
+                finishTask(taskToUpdate, (updatedTaskFromServer) => {
+                    setTaskData(prevTasks =>
+                        prevTasks.map(task =>
+                            task.id === taskID ? updatedTaskFromServer : task
+                        )
+                    );
+                });
             }
-        )
-    }
+
+            return prevTasks;
+        });
+    };
+
+
     /* STATUS FORMULARZU ZADANIA */
     const toggleFormStatus = (taskID) => {
         setFormStatus(prevStatus => ({
@@ -73,11 +86,14 @@ const App = () => {
 
     return (
         <>
-            {taskData.length}
             <NewTask onNewTask={setTaskData}/>
             <Task importedTasks={taskData} onDeleteTask={handleDeleteTask} onFinishTask={handleFinishTask}
                   formStatus={formStatus} toggleFormStatus={toggleFormStatus} operations={operations}
-                  handleAddOperation={handleAddOperation}/>
+                  handleAddOperation={handleAddOperation}
+
+            />
+
+
         </>
     )
 }

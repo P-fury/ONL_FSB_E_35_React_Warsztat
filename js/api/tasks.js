@@ -71,19 +71,18 @@ export const deleteTask = async (taskID, successCallback) => {
     }
 
 
-
 }
 
 
-export const finishTask = async (taskWithIdDATA, successCallback) => {
+export const finishTask = async (taskToUpdate, successCallback) => {
     try {
-        const response = await fetch(`${API_URL}/tasks/${taskWithIdDATA.id}`, {
+        const response = await fetch(`${API_URL}/tasks/${taskToUpdate.id}`, {
             method: "PUT",
             headers: {
                 'Authorization': API_KEY,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({...taskWithIdDATA, status: 'closed'}),
+            body: JSON.stringify({...taskToUpdate, status: 'closed'}),
 
         });
 
@@ -97,7 +96,6 @@ export const finishTask = async (taskWithIdDATA, successCallback) => {
     } catch (err) {
         console.log(err);
     }
-
 
 
 }
