@@ -1,10 +1,29 @@
 import React, {useState} from "react";
 import {addOperation} from "./api/operations";
+import Operation from "./Operation";
 
 
-const Task = ({importedTasks, onDeleteTask, onFinishTask, formStatus, toggleFormStatus, operations, handleAddOperation}) => {
-
+const Task = ({
+                  importedTasks,
+                  onDeleteTask,
+                  onFinishTask,
+                  formStatus,
+                  toggleFormStatus,
+                  operations,
+                  handleAddOperation
+              }) => {
     const [operation, setOperation] = useState('');
+
+    const [addTimeStatus, setAddTimeStatus] = useState({});
+    const [addTimeForm, setAddTimeForm] = useState({});
+
+    const onTimeFormChange = (operationID) => {
+        setAddTimeForm(prevState => ({
+            ...prevState,
+            [operationID]: !prevState[operationID] // Toggling form display
+        }));
+    };
+
 
     return (<>
             {importedTasks.map((task) => (
@@ -12,7 +31,7 @@ const Task = ({importedTasks, onDeleteTask, onFinishTask, formStatus, toggleForm
                     <div className="card-header d-flex justify-content-between align-items-center">
                         <div>
                             <h5>{task.title}</h5>
-                            <h6 className="card-subtitle text-muted">{task.description},{task.id}</h6>
+                            <h6 className="card-subtitle text-muted">{task.description}</h6>
                         </div>
 
                         <div>
@@ -65,16 +84,11 @@ const Task = ({importedTasks, onDeleteTask, onFinishTask, formStatus, toggleForm
                             </form>
                         </div>
                     </>)}
-                    <ul className="list-group list-group-flush">
-                        {operations && operations[task.id] && operations[task.id].length > 0 && (
-                            operations[task.id]
-                                .map(operation => (
-                                    <li key={operation.id} className="list-group-item">
-                                        {operation.description}
-                                    </li>
-                                ))
-                        )}
-                    </ul>
+
+
+                    <Operation operations={operations} taskID={task.id} addTimeStatus={addTimeStatus}
+                               addTimeForm={addTimeForm} onTimeFormChange={onTimeFormChange}/>
+
 
                 </section>
 
