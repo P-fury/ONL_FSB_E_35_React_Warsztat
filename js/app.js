@@ -1,11 +1,15 @@
 import React, {useEffect} from "react";
 import {createRoot} from "react-dom/client";
-import {getTasks} from "./api/tasks";
+import {getTasks, addTask} from "./api/tasks";
 import NewTask from "./NewTask";
+import Task from "./Task";
+
+
 
 
 const App = () => {
     const [taskData, setTaskData] = React.useState(null);
+
 
     useEffect(() => {
         getTasks(setTaskData);
@@ -15,14 +19,11 @@ const App = () => {
         return <h1>Loading...</h1>
     }
 
-    const onNewTask = () => {
-        console.log(taskData);
-    }
-
     return (
         <>
             {taskData.length}
-            <NewTask onNewTask={onNewTask}/>
+            <NewTask onNewTask={setTaskData}  />
+            <Task importedTasks={taskData} />
         </>
     )
 }
